@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Lid -->
+  <rect x="10" y="3" width="12" height="4" rx="2" fill="#78350f"/>
+  <!-- Neck -->
+  <rect x="11" y="6" width="10" height="3" rx="1" fill="#92400e"/>
+  <!-- Rim -->
+  <rect x="8" y="8" width="16" height="3" rx="1.5" fill="#b45309"/>
+  <!-- Body -->
+  <path d="M7 11 Q5 13 5 16 L5 24 Q5 28 9 28 L23 28 Q27 28 27 24 L27 16 Q27 13 25 11 Z" fill="#f59e0b"/>
+  <!-- Honey fill -->
+  <path d="M9 14 Q9 12 11 12 L21 12 Q23 12 23 14 L23 25 Q23 26 22 26 L10 26 Q9 26 9 25 Z" fill="#fcd34d"/>
+  <!-- Honey drip -->
+  <path d="M15 26 Q15 29 16 30 Q17 29 17 26 Z" fill="#fbbf24"/>
+  <!-- Shine -->
+  <ellipse cx="12" cy="17" rx="2" ry="3" fill="#fef3c7" opacity="0.4"/>
+</svg>

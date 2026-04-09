@@ -44,6 +44,14 @@ func NewRouter(db *pgxpool.Pool) *gin.Engine {
 	r.HTMLRender = loadTemplates()
 	r.Static("/static", "./static")
 
+	r.GET("/favicon.ico", func(c *gin.Context) {
+		c.File("./static/favicon.svg")
+	})
+
+	r.GET("/robots.txt", func(c *gin.Context) {
+		c.String(http.StatusOK, "User-agent: *\nDisallow: /\n")
+	})
+
 	// Page handlers
 	pages := NewPageHandler(db)
 	r.GET("/", pages.Index)
