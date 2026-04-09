@@ -1,27 +1,35 @@
 {{ template "layout" . }}
 
 {{ define "content" }}
-<!-- Hero disclaimer -->
-<div class="bg-red-900/30 border-2 border-red-600 rounded-xl p-8 mb-10 text-center">
-    <h1 class="text-4xl font-extrabold text-red-400 mb-4">⚠ Security Research Showcase</h1>
-    <p class="text-xl text-red-200 max-w-3xl mx-auto">
-        This entire website is a <strong>honeypot</strong> designed to capture and study unsolicited bot and attacker activity.
-        <strong>Nothing here is real.</strong> Do not submit any personal information.
+<!-- Hero -->
+<div class="bg-gray-900/60 border border-gray-800 rounded-xl p-8 mb-10 text-center">
+    <h1 class="text-4xl font-extrabold text-amber-400 mb-4">🍯 Welcome to the Unsolicited App</h1>
+    <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+        This site is a <a href="https://en.wikipedia.org/wiki/Honeypot_(computing)" target="_blank" class="text-amber-300 font-bold underline hover:text-amber-200">honeypot</a> — a fake website that sits around
+        waiting for bots and attackers to show up uninvited. Spoiler: they always do.
     </p>
-    <p class="text-gray-400 mt-4">
-        All forms, login pages, and endpoints on this site exist solely to observe automated attacks in the wild.
-        Captured data is analyzed and categorized using AI for educational purposes.
+    <p class="text-gray-400 mt-4 max-w-2xl mx-auto">
+        Every form, login page, and sketchy URL on this site is bait. When bots take the bait,
+        we capture what they do and let an AI classify the chaos. It's like a nature documentary, but for internet gremlins.
     </p>
+    <div class="mt-6 inline-block bg-gray-800 border border-amber-500/30 rounded-lg px-5 py-3">
+        <p class="text-amber-200 text-sm font-medium">
+            🧑 <strong>Real human?</strong> Hi! Please don't type any real personal info below.
+            These forms go nowhere useful — they're just here to trick bots. Use fake data or just
+            <a href="/stats" class="text-blue-400 hover:underline">skip to the fun stats →</a>
+        </p>
+    </div>
 </div>
 
 <!-- About section -->
 <div class="mb-12 text-center">
-    <h2 class="text-2xl font-bold text-gray-200 mb-3">What is this?</h2>
+    <h2 class="text-2xl font-bold text-gray-200 mb-3">So… what's actually happening here?</h2>
     <p class="text-gray-400 max-w-2xl mx-auto">
-        This project demonstrates how bots and attackers continuously probe web servers.
-        It captures three types of unsolicited activity: form spam, SSH brute-force attempts,
-        and URL exploit probing — all analyzed and categorized in real-time.
-        <a href="/stats" class="text-blue-400 hover:underline">View the live stats →</a>
+        The moment you put a server on the internet, uninvited guests start knocking.
+        This project captures three flavors of unsolicited activity — form spam, SSH brute-force attempts,
+        and URL exploit probing — then categorizes them in real-time with AI.
+        Think of it as a guest book nobody asked to sign.
+        <a href="/stats" class="text-blue-400 hover:underline">See who showed up →</a>
     </p>
 </div>
 
@@ -29,80 +37,65 @@
 <div class="grid md:grid-cols-3 gap-8">
     <!-- Subscribe form -->
     <div class="bg-gray-900 rounded-xl border border-gray-800 p-6">
-        <div class="bg-red-900/20 border border-red-800 rounded-lg p-3 mb-4">
-            <p class="text-red-400 text-sm font-semibold text-center">
-                🚫 RESEARCH ONLY — Do NOT enter real information
-            </p>
-        </div>
-        <h3 class="text-xl font-bold text-gray-200 mb-1">Unsolicited Email List</h3>
-        <p class="text-gray-500 text-sm mb-4">This form captures bot spam submissions.</p>
+        <h3 class="text-xl font-bold text-gray-200 mb-1">Unsolicited Newsletter</h3>
+        <p class="text-gray-500 text-sm mb-4">Bots love newsletter forms. Let's see what they send.</p>
         <form action="/subscribe" method="POST" class="space-y-3">
             <div>
                 <label class="block text-sm text-gray-400 mb-1">Name</label>
-                <input type="text" name="name" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:ring-red-500 focus:border-red-500" placeholder="Name">
+                <input type="text" name="name" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:ring-amber-500 focus:border-amber-500" placeholder="Definitely Not A Robot">
             </div>
             <div>
                 <label class="block text-sm text-gray-400 mb-1">Email</label>
-                <input type="email" name="email" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:ring-red-500 focus:border-red-500" placeholder="email@example.com">
+                <input type="email" name="email" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:ring-amber-500 focus:border-amber-500" placeholder="bot@example.com">
             </div>
-            <button type="submit" class="w-full bg-red-700 hover:bg-red-600 text-white font-semibold py-2 rounded transition">
-                Subscribe
+            <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-semibold py-2 rounded transition">
+                Subscribe to Nothing
             </button>
         </form>
     </div>
 
     <!-- Login form -->
     <div class="bg-gray-900 rounded-xl border border-gray-800 p-6">
-        <div class="bg-red-900/20 border border-red-800 rounded-lg p-3 mb-4">
-            <p class="text-red-400 text-sm font-semibold text-center">
-                🚫 RESEARCH ONLY — Do NOT enter real credentials
-            </p>
-        </div>
         <h3 class="text-xl font-bold text-gray-200 mb-1">Unsolicited Login</h3>
-        <p class="text-gray-500 text-sm mb-4">This form captures credential stuffing bots.</p>
+        <p class="text-gray-500 text-sm mb-4">Credential stuffers can't resist a login form.</p>
         <form action="/login" method="POST" class="space-y-3">
             <div>
                 <label class="block text-sm text-gray-400 mb-1">Username</label>
-                <input type="text" name="username" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:ring-red-500 focus:border-red-500" placeholder="admin">
+                <input type="text" name="username" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:ring-amber-500 focus:border-amber-500" placeholder="admin (obviously)">
             </div>
             <div>
                 <label class="block text-sm text-gray-400 mb-1">Password</label>
-                <input type="password" name="password" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:ring-red-500 focus:border-red-500" placeholder="password123">
+                <input type="password" name="password" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:ring-amber-500 focus:border-amber-500" placeholder="password123">
             </div>
-            <button type="submit" class="w-full bg-red-700 hover:bg-red-600 text-white font-semibold py-2 rounded transition">
-                Log In
+            <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-semibold py-2 rounded transition">
+                Log Into the Void
             </button>
         </form>
     </div>
 
     <!-- Register form -->
     <div class="bg-gray-900 rounded-xl border border-gray-800 p-6">
-        <div class="bg-red-900/20 border border-red-800 rounded-lg p-3 mb-4">
-            <p class="text-red-400 text-sm font-semibold text-center">
-                🚫 RESEARCH ONLY — Do NOT enter real information
-            </p>
-        </div>
-        <h3 class="text-xl font-bold text-gray-200 mb-1">Unsolicited Registration</h3>
-        <p class="text-gray-500 text-sm mb-4">This form captures bot account creation attempts.</p>
+        <h3 class="text-xl font-bold text-gray-200 mb-1">Unsolicited Sign Up</h3>
+        <p class="text-gray-500 text-sm mb-4">Bots create accounts anywhere. Even here, apparently.</p>
         <form action="/register" method="POST" class="space-y-3">
             <div>
                 <label class="block text-sm text-gray-400 mb-1">Username</label>
-                <input type="text" name="username" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:ring-red-500 focus:border-red-500" placeholder="newuser">
+                <input type="text" name="username" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:ring-amber-500 focus:border-amber-500" placeholder="xX_h4cker_Xx">
             </div>
             <div>
                 <label class="block text-sm text-gray-400 mb-1">Email</label>
-                <input type="email" name="email" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:ring-red-500 focus:border-red-500" placeholder="email@example.com">
+                <input type="email" name="email" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:ring-amber-500 focus:border-amber-500" placeholder="totally@legit.biz">
             </div>
             <div>
                 <label class="block text-sm text-gray-400 mb-1">Password</label>
-                <input type="password" name="password" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:ring-red-500 focus:border-red-500" placeholder="password">
+                <input type="password" name="password" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:ring-amber-500 focus:border-amber-500" placeholder="hunter2">
             </div>
             <div>
                 <label class="block text-sm text-gray-400 mb-1">Confirm Password</label>
-                <input type="password" name="confirm_password" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:ring-red-500 focus:border-red-500" placeholder="password">
+                <input type="password" name="confirm_password" class="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-gray-200 focus:ring-amber-500 focus:border-amber-500" placeholder="hunter2">
             </div>
-            <button type="submit" class="w-full bg-red-700 hover:bg-red-600 text-white font-semibold py-2 rounded transition">
-                Register
+            <button type="submit" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-semibold py-2 rounded transition">
+                Create a Pointless Account
             </button>
         </form>
     </div>
