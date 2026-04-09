@@ -1,0 +1,45 @@
+{{ define "layout" }}
+<!DOCTYPE html>
+<html lang="en" class="bg-gray-950 text-gray-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ if .Title }}{{ .Title }} — {{ end }}Unsolicited</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <style>
+        .pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <nav class="bg-gray-900 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🍯</span>
+                    <a href="/" class="text-xl font-bold text-red-500">Unsolicited</a>
+                </div>
+                <div class="flex gap-6">
+                    <a href="/" class="text-gray-300 hover:text-white transition">Home</a>
+                    <a href="/stats" class="text-gray-300 hover:text-white transition">Stats</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {{ template "content" . }}
+    </main>
+
+    <footer class="bg-gray-900 border-t border-gray-800 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
+            <p class="text-red-400 font-semibold mb-1">⚠ RESEARCH SHOWCASE — FOR DEMONSTRATION PURPOSES ONLY</p>
+            <p>All data shown is from unsolicited bot and attacker activity captured by honeypot systems.</p>
+            <p class="mt-1">No real services are exposed. Do not submit personal information.</p>
+        </div>
+    </footer>
+</body>
+</html>
+{{ end }}

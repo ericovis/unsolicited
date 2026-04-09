@@ -1,0 +1,58 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+      - "2222:2222"
+    environment:
+      - DATABASE_URL=postgres://unsolicited:unsolicited@db:5432/unsolicited?sslmode=disable
+      - OLLAMA_URL=http://ollama:11434
+      - OLLAMA_MODEL=gemma3:1b
+      - HTTP_PORT=8080
+      - SSH_PORT=2222
+    volumes:
+      - ssh-keys:/data
+    depends_on:
+      db:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    restart: unless-stopped
+
+  db:
+    image: timescale/timescaledb:latest-pg17
+    environment:
+      - POSTGRES_USER=unsolicited
+      - POSTGRES_PASSWORD=unsolicited
+      - POSTGRES_DB=unsolicited
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U unsolicited"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama-data:/root/.ollama
+    ports:
+      - "11434:11434"
+    restart: unless-stopped
+
+  ollama-pull:
+    image: ollama/ollama:latest
+    depends_on:
+      ollama:
+        condition: service_started
+    entrypoint: ["sh", "-c", "sleep 5 && ollama pull gemma3:1b"]
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    restart: "no"
+
+volumes:
+  pgdata:
+  ollama-data:
+  ssh-keys:

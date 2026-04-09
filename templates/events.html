@@ -1,0 +1,58 @@
+{{ template "layout" . }}
+
+{{ define "content" }}
+<div class="bg-gray-900 rounded-xl border border-gray-800 p-6">
+    <h2 class="text-xl font-bold text-gray-200 mb-4">Events</h2>
+    <div class="flex gap-2 mb-4">
+        <button onclick="loadEvents('')" id="btn-all" class="px-4 py-2 rounded-lg text-sm bg-blue-600 text-white">All</button>
+        <button onclick="loadEvents('form')" id="btn-form" class="px-4 py-2 rounded-lg text-sm bg-gray-700 text-gray-300 hover:bg-gray-600">📝 Forms</button>
+        <button onclick="loadEvents('ssh')" id="btn-ssh" class="px-4 py-2 rounded-lg text-sm bg-gray-700 text-gray-300 hover:bg-gray-600">🔑 SSH</button>
+        <button onclick="loadEvents('url')" id="btn-url" class="px-4 py-2 rounded-lg text-sm bg-gray-700 text-gray-300 hover:bg-gray-600">🔍 URLs</button>
+    </div>
+    <div id="events-list">
+        <div class="animate-pulse space-y-2">
+            <div class="h-10 bg-gray-800 rounded"></div>
+            <div class="h-10 bg-gray-800 rounded"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+function countryFlag(code) {
+    if (!code || code.length !== 2) return '🌐';
+    return String.fromCodePoint(...[...code.toUpperCase()].map(c => 0x1F1E6 + c.charCodeAt(0) - 65));
+}
+
+async function loadEvents(type) {
+    document.querySelectorAll('[id^="btn-"]').forEach(b => {
+        b.className = 'px-4 py-2 rounded-lg text-sm bg-gray-700 text-gray-300 hover:bg-gray-600';
+    });
+    document.getElementById('btn-'+(type||'all')).className = 'px-4 py-2 rounded-lg text-sm bg-blue-600 text-white';
+
+    let url = '/api/stats/events?limit=50';
+    if (type) url += '&type=' + type;
+
+    const resp = await fetch(url);
+    const data = await resp.json();
+    const target = document.getElementById('events-list');
+    const icons = {form:'📝',ssh:'🔑',url:'🔍'};
+    if (!data || data.length === 0) {
+        target.innerHTML = '<p class="text-gray-500">No events found.</p>';
+        return;
+    }
+    target.innerHTML = '<div class="space-y-1">' + data.map(e => `
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-800/30 hover:bg-gray-800/60 transition text-sm">
+            <span class="text-lg">${icons[e.event_type]||'❓'}</span>
+            <span class="text-gray-500 w-40 shrink-0">${new Date(e.created_at).toLocaleString()}</span>
+            <span class="text-gray-400 w-28 shrink-0 font-mono">${e.ip}</span>
+            <span class="w-6 text-center">${countryFlag(e.country_code)}</span>
+            <span class="text-gray-200 flex-1 truncate">${e.summary}</span>
+            <div class="flex gap-1 shrink-0">
+                ${(e.categories||[]).map(cat => '<span class="px-2 py-0.5 bg-gray-700 text-gray-300 rounded-full text-xs">'+cat+'</span>').join('')}
+            </div>
+        </div>
+    `).join('') + '</div>';
+}
+loadEvents('');
+</script>
+{{ end }}

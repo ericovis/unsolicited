@@ -1,0 +1,165 @@
+{{ template "layout" . }}
+
+{{ define "content" }}
+<h1 class="text-3xl font-bold text-gray-100 mb-8">Live Statistics</h1>
+
+<!-- Overview counters -->
+<div id="overview" hx-get="/api/stats/overview" hx-trigger="load, every 30s" hx-swap="innerHTML">
+    <div class="grid grid-cols-3 gap-6 mb-8">
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 animate-pulse"><div class="h-20"></div></div>
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 animate-pulse"><div class="h-20"></div></div>
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 animate-pulse"><div class="h-20"></div></div>
+    </div>
+</div>
+
+<!-- Time series chart -->
+<div class="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-8">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-gray-200">Activity Over Time</h2>
+        <div class="flex gap-2">
+            <button onclick="loadChart('24h')" id="btn-24h" class="px-3 py-1 rounded text-sm bg-blue-600 text-white">24h</button>
+            <button onclick="loadChart('7d')" id="btn-7d" class="px-3 py-1 rounded text-sm bg-gray-700 text-gray-300 hover:bg-gray-600">7d</button>
+            <button onclick="loadChart('30d')" id="btn-30d" class="px-3 py-1 rounded text-sm bg-gray-700 text-gray-300 hover:bg-gray-600">30d</button>
+        </div>
+    </div>
+    <canvas id="timeseriesChart" height="100"></canvas>
+</div>
+
+<!-- Top attack categories -->
+<div class="bg-gray-900 rounded-xl border border-gray-800 p-6 mb-8">
+    <h2 class="text-xl font-bold text-gray-200 mb-4">Top Attack Categories</h2>
+    <div id="categories" hx-get="/api/stats/categories" hx-trigger="load, every 30s" hx-swap="innerHTML">
+        <div class="animate-pulse space-y-3">
+            <div class="h-8 bg-gray-800 rounded"></div>
+            <div class="h-8 bg-gray-800 rounded"></div>
+            <div class="h-8 bg-gray-800 rounded"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Latest events feed -->
+<div class="bg-gray-900 rounded-xl border border-gray-800 p-6">
+    <h2 class="text-xl font-bold text-gray-200 mb-4">Latest Events</h2>
+    <div id="events" hx-get="/api/stats/events?limit=30" hx-trigger="load, every 30s" hx-swap="innerHTML">
+        <div class="animate-pulse space-y-2">
+            <div class="h-10 bg-gray-800 rounded"></div>
+            <div class="h-10 bg-gray-800 rounded"></div>
+            <div class="h-10 bg-gray-800 rounded"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// HTMX response processing for overview
+document.body.addEventListener('htmx:afterRequest', function(evt) {
+    if (evt.detail.pathInfo.requestPath === '/api/stats/overview') {
+        try {
+            const data = JSON.parse(evt.detail.xhr.responseText);
+            evt.detail.target.innerHTML = renderOverview(data);
+        } catch(e) {}
+    }
+    if (evt.detail.pathInfo.requestPath === '/api/stats/categories') {
+        try {
+            const data = JSON.parse(evt.detail.xhr.responseText);
+            evt.detail.target.innerHTML = renderCategories(data);
+        } catch(e) {}
+    }
+    if (evt.detail.pathInfo.requestPath === '/api/stats/events?limit=30') {
+        try {
+            const data = JSON.parse(evt.detail.xhr.responseText);
+            evt.detail.target.innerHTML = renderEvents(data);
+        } catch(e) {}
+    }
+});
+
+function renderOverview(d) {
+    const cards = [
+        {label: 'Form Submissions', total: d.form_total, h24: d.form_24h, d7: d.form_7d, color: 'blue', icon: '📝'},
+        {label: 'SSH Attempts', total: d.ssh_total, h24: d.ssh_24h, d7: d.ssh_7d, color: 'yellow', icon: '🔑'},
+        {label: 'URL Probes', total: d.url_total, h24: d.url_24h, d7: d.url_7d, color: 'purple', icon: '🔍'},
+    ];
+    return '<div class="grid grid-cols-3 gap-6 mb-8">' + cards.map(c => `
+        <div class="bg-gray-900 rounded-xl border border-gray-800 p-6">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="text-2xl">${c.icon}</span>
+                <h3 class="text-lg font-semibold text-gray-300">${c.label}</h3>
+            </div>
+            <p class="text-4xl font-extrabold text-${c.color}-400">${(c.total||0).toLocaleString()}</p>
+            <div class="flex gap-4 mt-2 text-sm text-gray-500">
+                <span>24h: <span class="text-gray-300">${(c.h24||0).toLocaleString()}</span></span>
+                <span>7d: <span class="text-gray-300">${(c.d7||0).toLocaleString()}</span></span>
+            </div>
+        </div>
+    `).join('') + '</div>';
+}
+
+function renderCategories(data) {
+    if (!data || data.length === 0) return '<p class="text-gray-500">No categories yet. Waiting for classification...</p>';
+    const sevColors = {critical:'red',high:'orange',medium:'yellow',low:'green'};
+    return '<div class="space-y-2">' + data.map(c => `
+        <a href="/stats/category/${c.id}" class="flex items-center justify-between p-3 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition">
+            <div class="flex items-center gap-3">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-${sevColors[c.severity]||'gray'}-500"></span>
+                <span class="text-gray-200 font-medium">${c.name}</span>
+            </div>
+            <span class="text-gray-400 text-sm">${c.event_count} events</span>
+        </a>
+    `).join('') + '</div>';
+}
+
+function renderEvents(data) {
+    if (!data || data.length === 0) return '<p class="text-gray-500">No events captured yet.</p>';
+    const icons = {form:'📝',ssh:'🔑',url:'🔍'};
+    return '<div class="space-y-1">' + data.map(e => `
+        <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-800/30 hover:bg-gray-800/60 transition text-sm">
+            <span class="text-lg">${icons[e.event_type]||'❓'}</span>
+            <span class="text-gray-500 w-40 shrink-0">${new Date(e.created_at).toLocaleString()}</span>
+            <span class="text-gray-400 w-28 shrink-0 font-mono">${e.ip}</span>
+            <span class="text-gray-200 flex-1 truncate">${e.summary}</span>
+            <div class="flex gap-1 shrink-0">
+                ${(e.categories||[]).map(cat => '<span class="px-2 py-0.5 bg-gray-700 text-gray-300 rounded-full text-xs">'+cat+'</span>').join('')}
+            </div>
+        </div>
+    `).join('') + '</div>';
+}
+
+// Chart.js timeseries
+let chart = null;
+async function loadChart(range) {
+    document.querySelectorAll('[id^="btn-"]').forEach(b => {
+        b.className = 'px-3 py-1 rounded text-sm bg-gray-700 text-gray-300 hover:bg-gray-600';
+    });
+    document.getElementById('btn-'+range).className = 'px-3 py-1 rounded text-sm bg-blue-600 text-white';
+
+    const resp = await fetch('/api/stats/timeseries?range='+range);
+    const data = await resp.json();
+
+    const labels = (data||[]).map(p => {
+        const d = new Date(p.bucket);
+        return range === '24h' ? d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : d.toLocaleDateString([], {month:'short',day:'numeric'});
+    });
+
+    const datasets = [
+        {label:'Forms', data:(data||[]).map(p=>p.form_count), borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,0.1)', fill:true, tension:0.3},
+        {label:'SSH', data:(data||[]).map(p=>p.ssh_count), borderColor:'#eab308', backgroundColor:'rgba(234,179,8,0.1)', fill:true, tension:0.3},
+        {label:'URLs', data:(data||[]).map(p=>p.url_count), borderColor:'#a855f7', backgroundColor:'rgba(168,85,247,0.1)', fill:true, tension:0.3},
+    ];
+
+    if (chart) chart.destroy();
+    chart = new Chart(document.getElementById('timeseriesChart'), {
+        type: 'line',
+        data: {labels, datasets},
+        options: {
+            responsive: true,
+            interaction: {mode:'index', intersect:false},
+            scales: {
+                x: {ticks:{color:'#9ca3af'}, grid:{color:'#1f2937'}},
+                y: {beginAtZero:true, ticks:{color:'#9ca3af'}, grid:{color:'#1f2937'}}
+            },
+            plugins: {legend:{labels:{color:'#d1d5db'}}}
+        }
+    });
+}
+loadChart('24h');
+</script>
+{{ end }}
