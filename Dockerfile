@@ -14,11 +14,17 @@ FROM alpine:3.21
 
 RUN apk add --no-cache ca-certificates tzdata
 
+RUN addgroup -S app && adduser -S app -G app
+
 WORKDIR /app
 
 COPY --from=builder /unsolicited /app/unsolicited
 COPY templates/ /app/templates/
 COPY static/ /app/static/
+
+RUN mkdir -p /data && chown -R app:app /app /data
+
+USER app
 
 EXPOSE 8080 2222
 
