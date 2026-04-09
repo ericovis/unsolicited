@@ -51,7 +51,7 @@ document.body.addEventListener('htmx:afterRequest', function(evt) {
                 <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-800/30 hover:bg-gray-800/60 transition text-sm">
                     <span class="text-lg">${icons[e.event_type]||'❓'}</span>
                     <span class="text-gray-500 w-40 shrink-0">${new Date(e.created_at).toLocaleString()}</span>
-                    <span class="text-gray-400 w-28 shrink-0 font-mono">${e.ip}</span>
+                    <span class="text-gray-400 w-32 shrink-0 font-mono">${e.ip}</span>
                     <span class="w-6 text-center">${countryFlag(e.country_code)}</span>
                     <span class="text-gray-200 flex-1 truncate">${e.summary}</span>
                 </div>
